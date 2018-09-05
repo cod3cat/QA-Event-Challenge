@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<TestCases>
+  <Test id="1">
+    <Name>Login</Name>
+    <TestModule>Login Dashboard</TestModule>
+    <TestType>Smoke Test</TestType>
+    <TestExecution>Manual</TestExecution>
+    <URL>http://www.seleniumhq.org/</URL>
+  </Test>
+</TestCases>
+
+

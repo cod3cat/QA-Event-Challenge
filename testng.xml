@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Suite" parallel="tests" thread-count="20">
+	<test name="Test1">
+	    <parameter name="TestParam" value="New York Stories"></parameter>
+		<classes>
+			<class name="contest.RunnerClass"></class>
+		</classes>
+	</test>
+	<test name="Test2">
+	    <parameter name="TestParam" value="The Shawshank Redemption"></parameter>
+		<classes>
+			<class name="contest.RunnerClass"></class>
+		</classes>
+	</test>
+	<test name="Test3">
+	    <parameter name="TestParam" value="King Kong (1933)"></parameter>
+		<classes>
+			<class name="contest.RunnerClass"></class>
+		</classes>
+	</test>
+</suite> <!-- Suite -->
