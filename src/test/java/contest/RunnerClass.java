@@ -121,7 +121,7 @@ public class RunnerClass {
 
 			while(wikinames.hasMoreElements()) {
 				String key = (String) wikinames.nextElement();
-				System.out.println("Key: " +key+ " & Value: " +
+				System.out.println("Key: "+" " +key+ " & Value: " +
 						MapClass.wikitable.get(key));
 			}
 
@@ -130,7 +130,7 @@ public class RunnerClass {
 
 			while(imdbnames.hasMoreElements()) {
 				String key = (String) imdbnames.nextElement();
-				System.out.println("Key: " +key+ " & Value: " +
+				System.out.println("Key: "+" " +key+ " & Value: " +
 						MapClass.imdbtable.get(key));
 			}
 
