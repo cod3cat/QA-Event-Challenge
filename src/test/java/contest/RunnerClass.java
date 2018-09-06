@@ -22,16 +22,16 @@ public class RunnerClass {
 	public static final String wikiDirectorNames = "\">(\\b.*?)<\\/a>";
 	public static final String wikiDirectorList = ">Directed by<.*>(\\D+)<\\/td>";
 	public static final String imdbLinkRegEx = "https:\\/\\/www.imdb.com\\/title\\/tt[0-9]*\\/";
-	
+
 	//Placeholder for storing the api response from different sources
 	public String gResponse = null;
 	public String wResponse = null;
 	public String iResponse = null;
-	
+
 	//Store imdb movie url and director names
 	public String IMDBLinkWiki = null;
 	public String imdbDirectorNames = "";
-	
+
 	public int noOfDirectors;
 
 	MapClass obj = new MapClass();
@@ -39,10 +39,10 @@ public class RunnerClass {
 	@Parameters({"TestParam"})
 	@Test()
 	public void contestRun(String param){
-		
+
 		//Replace space with underscore because that's how api wants it
 		param = param.replaceAll(" ","_");
-		
+
 		//Create some lists and then their synchronized version so that they are thread safe?
 		List<String> dirList = new ArrayList<String>();
 		List<String> dirNames = new ArrayList<String>();
@@ -51,24 +51,23 @@ public class RunnerClass {
 		List<String> SyncdirList = Collections.synchronizedList(dirList);
 		List<String> SyncdirNames = Collections.synchronizedList(dirNames);
 		List<String> SyncimdbDirNames = Collections.synchronizedList(imdbDirNames);
-		
+
 		//Get the current thread ID
 		long id = Thread.currentThread().getId();
-		System.out.println(param +" running on  " +id);
-		
+		//System.out.println(param +" running on thread " +id);
+
 		//Save response from google search and extract wiki link for the movie 
 		gResponse = HttpClientClass.returnResponseBody(googleBase+param);
-		//System.out.println(param.replaceAll("[^A-Za-z_]",""));
 		String wikiUrlFromRegex = GetRegexData.regIMDBLinkFromWiki(gResponse, glink1+param.replaceAll("[^A-Za-z_]","")+glink2, 1);
 
 		//System.out.println("Wiki Link from google is   " +wikiUrlFromRegex);
 
 		//Save response from wiki link and extract imdb link
 		wResponse = HttpClientClass.returnResponseBody(wikiUrlFromRegex);
-		IMDBLinkWiki = GetRegexData.regIMDBLinkFromWiki(wResponse.toString(), imdbLinkRegEx, 1);
+		IMDBLinkWiki = GetRegexData.regIMDBLinkFromWiki(wResponse.toString(), imdbLinkRegEx, 0);
 
 		//System.out.println("IMDB Link is   " +IMDBLinkWiki);
-		
+
 		//Get director names from wiki
 		SyncdirList = GetRegexData.regDirectorData(wResponse.toString(), wikiDirectorList);
 		SyncdirNames = GetRegexData.regDirectorData(SyncdirList.get(0), wikiDirectorNames);
@@ -77,7 +76,7 @@ public class RunnerClass {
 		System.out.println();
 
 		//Add director names to map
-		MapClass.wikiDirectors(id-10+param.replaceAll("_", " "), SyncdirNames.toString());
+		MapClass.wikiDirectors(id-10+ " " +param.replaceAll("_", " "), SyncdirNames.toString());
 
 		noOfDirectors = SyncdirNames.size();
 		//System.out.println("Number of Directors for movie  " +param+ " is   " +noOfDirectors);
@@ -89,7 +88,7 @@ public class RunnerClass {
 			SyncimdbDirNames = GetRegexData.regDirectorData(iResponse, "\"director\": \\{\\D+\\d+\\D+\"name\":.*?(\\b.*)\"");
 			System.out.println("imdb Director List for " +param+ "  " +SyncimdbDirNames);
 			System.out.println();
-			MapClass.imdbDirectors(id-10+param.replaceAll("_", " "), SyncimdbDirNames.toString());
+			MapClass.imdbDirectors(id-10+ " "+param.replaceAll("_", " "), SyncimdbDirNames.toString());
 		}
 		else if (noOfDirectors == 2) {
 
@@ -99,7 +98,7 @@ public class RunnerClass {
 
 			System.out.println("imdb Director Links for " +param+ "  " +SyncdirNames);
 			System.out.println();
-			MapClass.imdbDirectors(id-10+param.replaceAll("_", " "), SyncimdbDirNames.toString());
+			MapClass.imdbDirectors(id-10 +" "+param.replaceAll("_", " "), SyncimdbDirNames.toString());
 		}
 		else {
 			String url = IMDBLinkWiki+"fullcredits?ref_=tt_ov_dr#directors/";
@@ -107,38 +106,41 @@ public class RunnerClass {
 			SyncimdbDirNames = GetRegexData.regDirectorData(iResponse, "\\/\\?ref_=ttfc_fc_dr\\d+\"\\D>\\s+(\\b.*)");
 			System.out.println("imdb Director Links for " +param+ "  " +SyncimdbDirNames);
 			System.out.println();
-			MapClass.imdbDirectors(id-10+param.replaceAll("_", " "), SyncimdbDirNames.toString());
+			MapClass.imdbDirectors(id-10+ " "+param.replaceAll("_", " "), SyncimdbDirNames.toString());
 		}
-
-		/*System.out.println("String of wikidirectors  " +MapClass.wikitable.toString());
-		System.out.println();
-		System.out.println("String of imdbdirectors  " +MapClass.imdbtable.toString());
-		System.out.println();*/
 	}
 
 	@AfterSuite
 	public static void match() {
-		
-		//At the end, if both tables match, your project is working correctly
+
+		//At the end, if both maps match, project is working correctly
 		if(MapClass.wikitable.toString().equalsIgnoreCase(MapClass.imdbtable.toString())) {
+
 			System.out.println("WIKI Table");
 			Enumeration<?> wikinames = MapClass.wikitable.keys();
+
 			while(wikinames.hasMoreElements()) {
 				String key = (String) wikinames.nextElement();
 				System.out.println("Key: " +key+ " & Value: " +
 						MapClass.wikitable.get(key));
 			}
 
-			/*System.out.println(MapClass.imdbtable.toString());
-			System.out.println();
-			System.out.println(MapClass.wikitable.toString());*/
+			System.out.println("IMDB Table");
+			Enumeration<?> imdbnames = MapClass.imdbtable.keys();
+
+			while(imdbnames.hasMoreElements()) {
+				String key = (String) imdbnames.nextElement();
+				System.out.println("Key: " +key+ " & Value: " +
+						MapClass.imdbtable.get(key));
+			}
 
 		}else {
-			
+
+			System.out.println("Table contents do not match");
 			System.out.println(MapClass.imdbtable);
 			System.out.println();
 			System.out.println(MapClass.wikitable);
-			
+
 		}
 	}
 
