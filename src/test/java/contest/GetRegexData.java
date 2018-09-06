@@ -21,16 +21,6 @@ public class GetRegexData {
 
 	}
 
-/*	public static String regWikiLink(String response, String pat){
-
-		Pattern WikiLink = Pattern.compile(pat);
-		Matcher matcher = WikiLink.matcher(response);
-
-		while (matcher.find()) { returnString = matcher.group(1).toString();  }
-		return returnString;        
-
-	}*/
-
 	public static List<String> regDirectorData(String Response, String pat){
 
 		List<String> dirNames = new ArrayList<String>();
